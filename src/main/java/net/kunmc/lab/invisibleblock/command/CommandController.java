@@ -53,8 +53,6 @@ public class CommandController implements CommandExecutor, TabCompleter {
         PacketContainer packet = pm.createPacket(PacketType.Play.Server.MULTI_BLOCK_CHANGE);
 
         String commandName = args[0];
-        WrapperPlayServerMultiBlockChange mbc = new WrapperPlayServerMultiBlockChange();
-        mbc.getChunk();
         return true;
     }
 }

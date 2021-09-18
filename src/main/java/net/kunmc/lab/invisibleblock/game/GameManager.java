@@ -8,8 +8,11 @@ public class GameManager {
     public static GameMode runningMode = GameMode.MODE_NEUTRAL;
     // ブロックを透明にする対象プレイヤー
     public static List<UUID> targetPlayer = new ArrayList<>();
-    // 透明対象となるブロックのリスト、透明にした後再度ブロックを非透明するため保持する必要がある
+
+    // 透明対象となるブロックの全リスト、透明にした後再度ブロックを非透明するため保持する必要がある
     public static List<InvisibleBlockData> targetBlock = new ArrayList<>();
+    // パケット送信対象となるBlockのリスト
+    public static List<InvisibleBlockData> sendTargetBlock = new ArrayList<>();
 
     public static void controller(GameMode runningMode) {
         // モードを設定
