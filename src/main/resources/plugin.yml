@@ -1,0 +1,12 @@
+name: InvisibleBlock
+version: ${project.version}
+main: net.kunmc.lab.invisibleblock.invisibleblock.InvisibleBlock
+api-version: 1.16
+prefix: InvisibleBlock
+authors: [ POne0301 ]
+description: 置いたブロックが透明になるプラグイン
+commands:
+  ib:
+    description: Invisible Block Plugin
+    usage: /<command>
+    permission: op
