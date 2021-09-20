@@ -5,18 +5,35 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-
-import java.awt.*;
-import java.util.Set;
+import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 
 public class BlockEvent implements Listener {
+
+    @EventHandler
+    public void onBlockPlace(PlayerBucketEmptyEvent e) {
+        //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
+        //    return;
+
+        BlockData blockData;
+        if (e.getBucket().equals(Material.LAVA_BUCKET)) {
+            blockData = Material.LAVA.createBlockData();
+        } else {
+            blockData = Material.WATER.createBlockData();
+        }
+
+        GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(e.getBlock()), new InvisibleBlockData(e.getBlock(), blockData));
+    }
+
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
         //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
@@ -24,11 +41,33 @@ public class BlockEvent implements Listener {
 
         Block b = e.getBlock();
         BlockData bd = e.getBlock().getBlockData();
-        // 2Block以上はonBlockMultiPlaceで処理
         if (bd instanceof Bed || bd instanceof Door) return;
 
-        InvisibleBlockData ib = new InvisibleBlockData(b, bd.clone());
-        GameManager.sendTargetBlock.add(ib);
+        GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(b), new InvisibleBlockData(b, bd.clone()));
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent e) {
+        //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
+        //    return;
+
+        Block b = e.getBlock();
+
+        String key = BlockConvert.createBlockLocationKey(b);
+        if (GameManager.sendTargetBlock.containsKey(key)) GameManager.sendTargetBlock.remove(key);
+        if (GameManager.targetBlock.containsKey(key)) GameManager.targetBlock.remove(key);
+    }
+
+    @EventHandler
+    public void onItemSpawn(ItemSpawnEvent event) {
+        // ベッドがドロップするので力技で消す
+        //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
+        //    return;
+
+        Material type = event.getEntity().getItemStack().getType();
+        if(isBed(type) || isDoor(type)){
+            event.getEntity().remove();
+        }
     }
 
     @EventHandler
@@ -43,14 +82,22 @@ public class BlockEvent implements Listener {
         int y = loc.getBlockY();
         int z = loc.getBlockZ();
         World w = e.getPlayer().getWorld();
-        GameManager.sendTargetBlock.add(new InvisibleBlockData(b, bd.clone()));
+        GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(b), new InvisibleBlockData(b, bd.clone()));
 
         if (bd instanceof Bed) {
             int[][] point = { {x+1,z}, {x,z+1}, {x-1,z}, {x, z-1}};
             for (int[] p: point) {
                 Block checkBlock = w.getBlockAt(p[0], y, p[1]);
                 if(isTargetBed(b, checkBlock)){
-                    GameManager.sendTargetBlock.add(new InvisibleBlockData(checkBlock, checkBlock.getBlockData().clone()));
+                    GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(checkBlock), new InvisibleBlockData(checkBlock, checkBlock.getBlockData().clone()));
+                }
+            }
+        } else if (bd instanceof Door) {
+            int[] point = {y-1, y+1};
+            for (int p: point) {
+                Block checkBlock = w.getBlockAt(x, p, z);
+                if(isTargetDoor(b, checkBlock)){
+                    GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(checkBlock), new InvisibleBlockData(checkBlock, checkBlock.getBlockData().clone()));
                 }
             }
         }
@@ -69,5 +116,50 @@ public class BlockEvent implements Listener {
         }
 
         return false;
+    }
+
+    private boolean isTargetDoor(Block b, Block checkBlock) {
+        if (!(checkBlock.getBlockData() instanceof Door)) return false;
+
+        Bisected.Half checkPart = Bisected.Half.TOP;
+        if (((Door)b.getBlockData()).getHalf() == Bisected.Half.TOP){
+            checkPart = Bisected.Half.BOTTOM;
+        }
+
+        if (((Door)checkBlock.getBlockData()).getHalf() == checkPart) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean isBed(Material material) {
+        return material == Material.BLACK_BED ||
+                material == Material.BLUE_BED ||
+                material == Material.BROWN_BED ||
+                material == Material.CYAN_BED ||
+                material == Material.GRAY_BED ||
+                material == Material.GREEN_BED ||
+                material == Material.LIGHT_BLUE_BED ||
+                material == Material.LIGHT_GRAY_BED ||
+                material == Material.LIME_BED ||
+                material == Material.MAGENTA_BED ||
+                material == Material.ORANGE_BED ||
+                material == Material.PINK_BED ||
+                material == Material.PURPLE_BED ||
+                material == Material.RED_BED ||
+                material == Material.WHITE_BED ||
+                material == Material.YELLOW_BED;
+    }
+    private boolean isDoor(Material material) {
+        return material == Material.DARK_OAK_DOOR ||
+                material == Material.ACACIA_DOOR ||
+                material == Material.BIRCH_DOOR ||
+                material == Material.IRON_DOOR ||
+                material == Material.CRIMSON_DOOR ||
+                material == Material.JUNGLE_DOOR ||
+                material == Material.OAK_DOOR ||
+                material == Material.SPRUCE_DOOR ||
+                material == Material.WARPED_DOOR;
     }
 }

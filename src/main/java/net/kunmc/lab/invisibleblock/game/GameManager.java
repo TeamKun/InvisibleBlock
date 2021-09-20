@@ -7,12 +7,14 @@ import java.util.*;
 public class GameManager {
     public static GameMode runningMode = GameMode.MODE_NEUTRAL;
     // ブロックを透明にする対象プレイヤー
-    public static List<UUID> targetPlayer = new ArrayList<>();
+    public static Set<UUID> targetPlayer = new HashSet<>();
 
     // 透明対象となるブロックの全リスト、透明にした後再度ブロックを非透明するため保持する必要がある
-    public static List<InvisibleBlockData> targetBlock = new ArrayList<>();
+    public static Map<String, InvisibleBlockData> targetBlock = new HashMap<>();
     // パケット送信対象となるBlockのリスト
-    public static List<InvisibleBlockData> sendTargetBlock = new ArrayList<>();
+    public static Map<String, InvisibleBlockData> sendTargetBlock = new HashMap<>();
+
+    public static boolean isRevertBlock = false;
 
     public static void controller(GameMode runningMode) {
         // モードを設定
@@ -23,7 +25,12 @@ public class GameManager {
                 // 開始処理
                 break;
             case MODE_NEUTRAL:
+                isRevertBlock = false;
                 // 停止処理
+                break;
+            case MODE_STOPPING:
+                isRevertBlock = true;
+                // 透明化停止 ~ 可視化する状態時のモーション
                 break;
         }
     }
@@ -31,6 +38,7 @@ public class GameManager {
     public enum GameMode {
         // ゲーム外の状態
         MODE_NEUTRAL,
-        MODE_START
+        MODE_START,
+        MODE_STOPPING
     }
 }

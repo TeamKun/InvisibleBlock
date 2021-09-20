@@ -1,7 +1,6 @@
 name: InvisibleBlock
 version: ${project.version}
 main: net.kunmc.lab.invisibleblock.InvisibleBlock
-depend: [ProtocolLib]
 api-version: 1.16
 prefix: InvisibleBlock
 authors: [ POne0301 ]

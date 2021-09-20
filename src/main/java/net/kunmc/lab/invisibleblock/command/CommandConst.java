@@ -9,6 +9,10 @@ public class CommandConst {
     public final static String COMMAND_ADD = "add";
     public final static String COMMAND_REMOVE = "remove";
 
-    // コンフィグ設定対象
-    public final static String COMMAND_CONFIG_CHANGE_TIME_SPAN= "setTime";
+    // コンフィグ系
+    public final static String COMMAND_CONFIG_TIME_SPAN= "setTime";
+    public final static String COMMAND_CONFIG_MAX_REVERT_NUM= "setMaxRevertNum";
+
+    // 状況確認
+    public final static String COMMAND_SHOW_STATUS= "showStatus";
 }
