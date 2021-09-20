@@ -20,9 +20,12 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 public class BlockEvent implements Listener {
 
     @EventHandler
-    public void onBlockPlace(PlayerBucketEmptyEvent e) {
-        //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
-        //    return;
+    public void onBucketEmptyPlace(PlayerBucketEmptyEvent e) {
+        if (GameManager.runningMode != GameManager.GameMode.MODE_START)
+            return;
+
+        if (!GameManager.targetPlayer.contains(e.getPlayer().getUniqueId()))
+            return;
 
         BlockData blockData;
         if (e.getBucket().equals(Material.LAVA_BUCKET)) {
@@ -36,20 +39,24 @@ public class BlockEvent implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
-        //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
-        //    return;
+        if (GameManager.runningMode != GameManager.GameMode.MODE_START)
+            return;
+
+        if (!GameManager.targetPlayer.contains(e.getPlayer().getUniqueId()))
+            return;
 
         Block b = e.getBlock();
         BlockData bd = e.getBlock().getBlockData();
         if (bd instanceof Bed || bd instanceof Door) return;
 
         GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(b), new InvisibleBlockData(b, bd.clone()));
+        System.out.println(GameManager.targetBlock.size());
     }
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-        //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
-        //    return;
+        if (GameManager.runningMode != GameManager.GameMode.MODE_START)
+            return;
 
         Block b = e.getBlock();
 
@@ -60,9 +67,8 @@ public class BlockEvent implements Listener {
 
     @EventHandler
     public void onItemSpawn(ItemSpawnEvent event) {
-        // ベッドがドロップするので力技で消す
-        //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
-        //    return;
+        if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
+            return;
 
         Material type = event.getEntity().getItemStack().getType();
         if(isBed(type) || isDoor(type)){
@@ -72,8 +78,11 @@ public class BlockEvent implements Listener {
 
     @EventHandler
     public void onBlockMultiPlace(BlockMultiPlaceEvent e) {
-        //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
-        //    return;
+        if (GameManager.runningMode != GameManager.GameMode.MODE_START)
+            return;
+
+        if (!GameManager.targetPlayer.contains(e.getPlayer().getUniqueId()))
+            return;
 
         Block b = e.getBlock();
         BlockData bd = e.getBlock().getBlockData();

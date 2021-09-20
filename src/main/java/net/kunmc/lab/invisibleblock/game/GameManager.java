@@ -10,9 +10,9 @@ public class GameManager {
     public static Set<UUID> targetPlayer = new HashSet<>();
 
     // 透明対象となるブロックの全リスト、透明にした後再度ブロックを非透明するため保持する必要がある
-    public static Map<String, InvisibleBlockData> targetBlock = new HashMap<>();
+    public static Map<String, InvisibleBlockData> targetBlock = new LinkedHashMap<>();
     // パケット送信対象となるBlockのリスト
-    public static Map<String, InvisibleBlockData> sendTargetBlock = new HashMap<>();
+    public static Map<String, InvisibleBlockData> sendTargetBlock = new LinkedHashMap<>();
 
     public static boolean isRevertBlock = false;
 
@@ -30,6 +30,7 @@ public class GameManager {
                 break;
             case MODE_STOPPING:
                 isRevertBlock = true;
+                sendTargetBlock.clear();
                 // 透明化停止 ~ 可視化する状態時のモーション
                 break;
         }

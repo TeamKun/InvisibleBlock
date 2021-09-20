@@ -21,8 +21,8 @@ public class Task extends BukkitRunnable {
 
     @Override
     public void run() {
-        //if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
-        //    return;
+        if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL)
+            return;
 
         // Playerの更新処理を実行
         List<InvisibleBlockData> shouldRemoveBlocks = new ArrayList<>();
