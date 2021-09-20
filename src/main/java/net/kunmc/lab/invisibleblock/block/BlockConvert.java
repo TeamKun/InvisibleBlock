@@ -1,10 +1,14 @@
 package net.kunmc.lab.invisibleblock.block;
 
 import net.kunmc.lab.invisibleblock.Config;
+import net.kunmc.lab.invisibleblock.InvisibleBlock;
 import net.kunmc.lab.invisibleblock.game.GameManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.Sign;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +23,18 @@ public class BlockConvert {
         List<String> reverted = new ArrayList<>();
         int cnt = 0;
         for (InvisibleBlockData ib : GameManager.targetBlock.values()) {
+            String key = BlockConvert.createBlockLocationKey(ib.block);
+            ib.block.setType(ib.blockData.getMaterial());
             ib.block.setBlockData(ib.blockData);
-            reverted.add(BlockConvert.createBlockLocationKey(ib.block));
+            if (ib.blockData instanceof org.bukkit.block.data.type.Sign && GameManager.signBlock.containsKey(key)) {
+                List<String> lines = GameManager.signBlock.get(key);
+                Sign sign = (Sign)ib.block.getState();
+                for (int i = 0; i < lines.size(); i++) {
+                    sign.setLine(i, lines.get(i));
+                }
+                sign.update();
+            }
+            reverted.add(key);
             cnt ++;
             if (cnt >= Config.maxRevertNum)break;
         }

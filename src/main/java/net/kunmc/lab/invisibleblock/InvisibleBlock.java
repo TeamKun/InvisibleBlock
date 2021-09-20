@@ -1,8 +1,10 @@
 package net.kunmc.lab.invisibleblock;
 
+import net.kunmc.lab.invisibleblock.block.BlockConvert;
 import net.kunmc.lab.invisibleblock.block.BlockEvent;
 import net.kunmc.lab.invisibleblock.command.CommandConst;
 import net.kunmc.lab.invisibleblock.command.CommandController;
+import net.kunmc.lab.invisibleblock.game.GameManager;
 import net.kunmc.lab.invisibleblock.task.Task;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -29,6 +31,10 @@ public final class InvisibleBlock extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        GameManager.sendTargetBlock.clear();
+        while (GameManager.targetBlock.size() > 0) {
+            BlockConvert.revertBlock();
+        }
+        getLogger().info("InvisibleBlock Plugin is disabled");
     }
 }

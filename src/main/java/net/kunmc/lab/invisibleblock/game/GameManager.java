@@ -14,6 +14,12 @@ public class GameManager {
     // パケット送信対象となるBlockのリスト
     public static Map<String, InvisibleBlockData> sendTargetBlock = new LinkedHashMap<>();
 
+    // 看板文字を保持する
+    public static Map<String, List<String>> signBlock = new HashMap<>();
+    // トラップドアの開閉を保持する
+    public static Map<String, Boolean> trapDoorBlock = new HashMap<>();
+
+
     public static boolean isRevertBlock = false;
 
     public static void controller(GameMode runningMode) {
