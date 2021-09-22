@@ -1,6 +1,8 @@
 package net.kunmc.lab.invisibleblock.game;
 
+import net.kunmc.lab.invisibleblock.block.BlockConvert;
 import net.kunmc.lab.invisibleblock.block.InvisibleBlockData;
+import org.bukkit.World;
 
 import java.util.*;
 
@@ -18,7 +20,8 @@ public class GameManager {
     public static Map<String, List<String>> signBlock = new HashMap<>();
     // トラップドアの開閉を保持する
     public static Map<String, Boolean> trapDoorBlock = new HashMap<>();
-
+    // ドアの開閉を保持する
+    public static Map<String, Boolean> DoorBlock = new HashMap<>();
 
     public static boolean isRevertBlock = false;
 
@@ -28,16 +31,17 @@ public class GameManager {
 
         switch (runningMode) {
             case MODE_START:
-                // 開始処理
                 break;
             case MODE_NEUTRAL:
                 isRevertBlock = false;
-                // 停止処理
+                trapDoorBlock.clear();
+                DoorBlock.clear();
+                signBlock.clear();
                 break;
             case MODE_STOPPING:
                 isRevertBlock = true;
                 sendTargetBlock.clear();
-                // 透明化停止 ~ 可視化する状態時のモーション
+               // 透明化停止 ~ 可視化する状態時のモーション
                 break;
         }
     }

@@ -11,7 +11,6 @@ public class InvisibleBlockData {
     //  対象Blockの元々のblockData
     public BlockData blockData;
 
-
     public InvisibleBlockData(Block block, BlockData blockData) {
         this.block = block;
         this.blockData = blockData;

@@ -9,8 +9,6 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Door;
-import org.bukkit.block.data.type.Sign;
-import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -40,7 +38,7 @@ public class BlockEvent implements Listener {
             blockData = Material.WATER.createBlockData();
         }
 
-        GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(e.getBlock()), new InvisibleBlockData(e.getBlock(), blockData));
+        GameManager.sendTargetBlock.put(BlockConvert.createLocationKeyFromBlock(e.getBlock()), new InvisibleBlockData(e.getBlock(), blockData));
     }
 
     @EventHandler
@@ -55,26 +53,8 @@ public class BlockEvent implements Listener {
         BlockData bd = e.getBlock().getBlockData();
         if (bd instanceof Bed || bd instanceof Door) return;
 
-        String key = BlockConvert.createBlockLocationKey(b);
+        String key = BlockConvert.createLocationKeyFromBlock(b);
         GameManager.sendTargetBlock.put(key, new InvisibleBlockData(b, bd.clone()));
-
-
-        /**
-         * 以下のブロックは単純にコピーできないため、専用のMapを用意して必要な情報を保持しておく
-         * - 看板
-         *   - 看板に書かれている文字
-         * - トラップドア
-         *   - トラップドアのon/off、ドアなどと異なり、特定の状態で建築に使われることがあるので持っておく
-         * */
-        //if (bd instanceof Sign) {
-        //    List<String> lines = new ArrayList<>();
-        //    for (String l: ((org.bukkit.block.Sign) b).getLines()) {
-        //        lines.add(l);
-        //    }
-        //    GameManager.signBlock.put(key, lines);
-        //}else if (bd instanceof TrapDoor){
-        //    GameManager.trapDoorBlock.put(key, ((TrapDoor) bd).isOpen());
-        //}
     }
     @EventHandler
     public void onSignChange(SignChangeEvent e) {
@@ -82,19 +62,20 @@ public class BlockEvent implements Listener {
 
         List<String> lines = new ArrayList<>();
         for (int i=0; i < e.getLines().length; i++){
+            System.out.println(e.getLine(i));
             lines.add(e.getLine(i));
         }
-        GameManager.signBlock.put(BlockConvert.createBlockLocationKey(b), lines);
+        GameManager.signBlock.put(BlockConvert.createLocationKeyFromBlock(b), lines);
     }
 
-        @EventHandler
+    @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
         if (GameManager.runningMode != GameManager.GameMode.MODE_START)
             return;
 
         Block b = e.getBlock();
 
-        String key = BlockConvert.createBlockLocationKey(b);
+        String key = BlockConvert.createLocationKeyFromBlock(b);
         if (GameManager.sendTargetBlock.containsKey(key)) GameManager.sendTargetBlock.remove(key);
         if (GameManager.targetBlock.containsKey(key)) GameManager.targetBlock.remove(key);
         if (GameManager.signBlock.containsKey(key)) GameManager.signBlock.remove(key);
@@ -127,14 +108,14 @@ public class BlockEvent implements Listener {
         int y = loc.getBlockY();
         int z = loc.getBlockZ();
         World w = e.getPlayer().getWorld();
-        GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(b), new InvisibleBlockData(b, bd.clone()));
+        GameManager.sendTargetBlock.put(BlockConvert.createLocationKeyFromBlock(b), new InvisibleBlockData(b, bd.clone()));
 
         if (bd instanceof Bed) {
             int[][] point = { {x+1,z}, {x,z+1}, {x-1,z}, {x, z-1}};
             for (int[] p: point) {
                 Block checkBlock = w.getBlockAt(p[0], y, p[1]);
                 if(isTargetBed(b, checkBlock)){
-                    GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(checkBlock), new InvisibleBlockData(checkBlock, checkBlock.getBlockData().clone()));
+                    GameManager.sendTargetBlock.put(BlockConvert.createLocationKeyFromBlock(checkBlock), new InvisibleBlockData(checkBlock, checkBlock.getBlockData().clone()));
                 }
             }
         } else if (bd instanceof Door) {
@@ -142,7 +123,7 @@ public class BlockEvent implements Listener {
             for (int p: point) {
                 Block checkBlock = w.getBlockAt(x, p, z);
                 if(isTargetDoor(b, checkBlock)){
-                    GameManager.sendTargetBlock.put(BlockConvert.createBlockLocationKey(checkBlock), new InvisibleBlockData(checkBlock, checkBlock.getBlockData().clone()));
+                    GameManager.sendTargetBlock.put(BlockConvert.createLocationKeyFromBlock(checkBlock), new InvisibleBlockData(checkBlock, checkBlock.getBlockData().clone()));
                 }
             }
         }

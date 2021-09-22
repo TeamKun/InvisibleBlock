@@ -31,12 +31,12 @@ public class Task extends BukkitRunnable {
             // Tick
             if (ib.tick < Config.time * 20) continue;
 
-            BlockConvert.changeToBarrier(ib.block);
+            BlockConvert.changeToBarrier(ib);
             shouldRemoveBlocks.add(ib);
         }
         for (InvisibleBlockData ib: shouldRemoveBlocks) {
             // 処理タイミングなどで存在しなくても問題ないようにチェックしから削除
-            String key = BlockConvert.createBlockLocationKey(ib.block);
+            String key = BlockConvert.createLocationKeyFromBlock(ib.block);
             if (GameManager.sendTargetBlock.containsKey(key)) {
                 GameManager.sendTargetBlock.remove(key);
                 GameManager.targetBlock.put(key, ib);
