@@ -26,7 +26,7 @@ public class Task extends BukkitRunnable {
 
         // Playerの更新処理を実行
         List<InvisibleBlockData> shouldRemoveBlocks = new ArrayList<>();
-        for (InvisibleBlockData ib: GameManager.sendTargetBlock.values()) {
+        for (InvisibleBlockData ib : GameManager.sendTargetBlock.values()) {
             ib.incrementTick();
             // Tick
             if (ib.tick < Config.time * 20) continue;
@@ -34,7 +34,7 @@ public class Task extends BukkitRunnable {
             BlockConvert.changeToBarrier(ib);
             shouldRemoveBlocks.add(ib);
         }
-        for (InvisibleBlockData ib: shouldRemoveBlocks) {
+        for (InvisibleBlockData ib : shouldRemoveBlocks) {
             // 処理タイミングなどで存在しなくても問題ないようにチェックしから削除
             String key = BlockConvert.createLocationKeyFromBlock(ib.block);
             if (GameManager.sendTargetBlock.containsKey(key)) {

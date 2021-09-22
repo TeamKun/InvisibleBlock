@@ -56,12 +56,13 @@ public class BlockEvent implements Listener {
         String key = BlockConvert.createLocationKeyFromBlock(b);
         GameManager.sendTargetBlock.put(key, new InvisibleBlockData(b, bd.clone()));
     }
+
     @EventHandler
     public void onSignChange(SignChangeEvent e) {
         Block b = e.getBlock();
 
         List<String> lines = new ArrayList<>();
-        for (int i=0; i < e.getLines().length; i++){
+        for (int i = 0; i < e.getLines().length; i++) {
             System.out.println(e.getLine(i));
             lines.add(e.getLine(i));
         }
@@ -88,7 +89,7 @@ public class BlockEvent implements Listener {
             return;
 
         Material type = event.getEntity().getItemStack().getType();
-        if(isBed(type) || isDoor(type)){
+        if (isBed(type) || isDoor(type)) {
             event.getEntity().remove();
         }
     }
@@ -111,18 +112,18 @@ public class BlockEvent implements Listener {
         GameManager.sendTargetBlock.put(BlockConvert.createLocationKeyFromBlock(b), new InvisibleBlockData(b, bd.clone()));
 
         if (bd instanceof Bed) {
-            int[][] point = { {x+1,z}, {x,z+1}, {x-1,z}, {x, z-1}};
-            for (int[] p: point) {
+            int[][] point = {{x + 1, z}, {x, z + 1}, {x - 1, z}, {x, z - 1}};
+            for (int[] p : point) {
                 Block checkBlock = w.getBlockAt(p[0], y, p[1]);
-                if(isTargetBed(b, checkBlock)){
+                if (isTargetBed(b, checkBlock)) {
                     GameManager.sendTargetBlock.put(BlockConvert.createLocationKeyFromBlock(checkBlock), new InvisibleBlockData(checkBlock, checkBlock.getBlockData().clone()));
                 }
             }
         } else if (bd instanceof Door) {
-            int[] point = {y-1, y+1};
-            for (int p: point) {
+            int[] point = {y - 1, y + 1};
+            for (int p : point) {
                 Block checkBlock = w.getBlockAt(x, p, z);
-                if(isTargetDoor(b, checkBlock)){
+                if (isTargetDoor(b, checkBlock)) {
                     GameManager.sendTargetBlock.put(BlockConvert.createLocationKeyFromBlock(checkBlock), new InvisibleBlockData(checkBlock, checkBlock.getBlockData().clone()));
                 }
             }
@@ -133,11 +134,11 @@ public class BlockEvent implements Listener {
         if (!(checkBlock.getBlockData() instanceof Bed)) return false;
 
         Bed.Part checkPart = Bed.Part.HEAD;
-        if (((Bed)b.getBlockData()).getPart() == Bed.Part.HEAD){
+        if (((Bed) b.getBlockData()).getPart() == Bed.Part.HEAD) {
             checkPart = Bed.Part.FOOT;
         }
 
-        if (((Bed)checkBlock.getBlockData()).getPart() == checkPart && ((Bed)b.getBlockData()).getFacing() == ((Bed) checkBlock.getBlockData()).getFacing()) {
+        if (((Bed) checkBlock.getBlockData()).getPart() == checkPart && ((Bed) b.getBlockData()).getFacing() == ((Bed) checkBlock.getBlockData()).getFacing()) {
             return true;
         }
 
@@ -148,11 +149,11 @@ public class BlockEvent implements Listener {
         if (!(checkBlock.getBlockData() instanceof Door)) return false;
 
         Bisected.Half checkPart = Bisected.Half.TOP;
-        if (((Door)b.getBlockData()).getHalf() == Bisected.Half.TOP){
+        if (((Door) b.getBlockData()).getHalf() == Bisected.Half.TOP) {
             checkPart = Bisected.Half.BOTTOM;
         }
 
-        if (((Door)checkBlock.getBlockData()).getHalf() == checkPart) {
+        if (((Door) checkBlock.getBlockData()).getHalf() == checkPart) {
             return true;
         }
 
@@ -177,6 +178,7 @@ public class BlockEvent implements Listener {
                 material == Material.WHITE_BED ||
                 material == Material.YELLOW_BED;
     }
+
     private boolean isDoor(Material material) {
         return material == Material.DARK_OAK_DOOR ||
                 material == Material.ACACIA_DOOR ||

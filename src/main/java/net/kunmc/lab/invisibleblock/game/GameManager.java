@@ -1,8 +1,6 @@
 package net.kunmc.lab.invisibleblock.game;
 
-import net.kunmc.lab.invisibleblock.block.BlockConvert;
 import net.kunmc.lab.invisibleblock.block.InvisibleBlockData;
-import org.bukkit.World;
 
 import java.util.*;
 
@@ -41,7 +39,7 @@ public class GameManager {
             case MODE_STOPPING:
                 isRevertBlock = true;
                 sendTargetBlock.clear();
-               // 透明化停止 ~ 可視化する状態時のモーション
+                // 透明化停止 ~ 可視化する状態時のモーション
                 break;
         }
     }

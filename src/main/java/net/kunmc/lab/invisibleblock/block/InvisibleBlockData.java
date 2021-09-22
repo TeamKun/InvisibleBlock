@@ -16,7 +16,7 @@ public class InvisibleBlockData {
         this.blockData = blockData;
     }
 
-    public void incrementTick (){
+    public void incrementTick() {
         tick++;
     }
 }
