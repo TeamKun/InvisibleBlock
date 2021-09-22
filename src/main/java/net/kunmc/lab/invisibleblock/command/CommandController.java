@@ -74,8 +74,12 @@ public class CommandController implements CommandExecutor, TabCompleter {
                     sender.sendMessage(DecolationConst.AQUA + "可視化中はコマンドを受け付けていません");
                     return true;
                 }
+                if (args.length != 1) {
+                    sender.sendMessage(DecolationConst.RED + "引数が不要なコマンドです");
+                    return true;
+                }
                 GameManager.controller(GameManager.GameMode.MODE_START);
-                sender.sendMessage(DecolationConst.GREEN + "ブロック透過を開始します");
+                sender.sendMessage(DecolationConst.GREEN + "ブロック透明化を開始します");
                 break;
             case CommandConst.COMMAND_STOP:
                 if (GameManager.runningMode == GameManager.GameMode.MODE_NEUTRAL) {
@@ -85,8 +89,12 @@ public class CommandController implements CommandExecutor, TabCompleter {
                     sender.sendMessage(DecolationConst.AQUA + "可視化中はコマンドを受け付けていません");
                     return true;
                 }
+                if (args.length != 1) {
+                    sender.sendMessage(DecolationConst.RED + "引数が不要なコマンドです");
+                    return true;
+                }
                 GameManager.controller(GameManager.GameMode.MODE_STOPPING);
-                sender.sendMessage(DecolationConst.GREEN + "ブロック透過終了、可視化します");
+                sender.sendMessage(DecolationConst.GREEN + "ブロック透過化終了、可視化します");
                 break;
             case CommandConst.COMMAND_ADD:
                 if (args.length != 2) {
@@ -161,7 +169,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
                 break;
             case CommandConst.COMMAND_SHOW_STATUS:
                 if (args.length != 1) {
-                    sender.sendMessage(DecolationConst.RED + "引数の数が不正です");
+                    sender.sendMessage(DecolationConst.RED + "引数が不要なコマンドです");
                     return true;
                 }
                 sender.sendMessage(DecolationConst.GREEN + "設定値一覧");
@@ -184,6 +192,7 @@ public class CommandController implements CommandExecutor, TabCompleter {
                 break;
             default:
                 sender.sendMessage(DecolationConst.RED + "存在しないコマンドです");
+                sendUsage(sender);
         }
         return true;
     }
