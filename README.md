@@ -32,7 +32,7 @@
     - setMaxRevertNum <数字>
 
       - ブロックの可視化時に1Tickあたりに可視化されるブロック数を指定
-      - デフォルトは500(Block/tick)
+      - デフォルトは1000(Block/tick)
 
     - showStatus
 
