@@ -9,12 +9,11 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Door;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockMultiPlaceEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 
@@ -22,6 +21,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockEvent implements Listener {
+
+    @EventHandler
+    private void onBlockFall(EntityChangeBlockEvent event) {
+        if (GameManager.runningMode != GameManager.GameMode.MODE_START)
+            return;
+
+        // 砂など落下を停止する
+        // See: https://www.spigotmc.org/threads/prevent-sand-from-falling-upon-placing-sand.133386/
+        if (event.getEntityType() == EntityType.FALLING_BLOCK && event.getTo() == Material.AIR) {
+            event.setCancelled(true);
+            event.getBlock().getState().update(false, false);
+        }
+    }
+
+    @EventHandler
+    public void onBlockPhysics(BlockPhysicsEvent e) {
+        if (GameManager.runningMode != GameManager.GameMode.MODE_START)
+            return;
+
+        e.setCancelled(true);
+    }
 
     @EventHandler
     public void onBucketEmptyPlace(PlayerBucketEmptyEvent e) {
@@ -59,6 +79,10 @@ public class BlockEvent implements Listener {
 
     @EventHandler
     public void onSignChange(SignChangeEvent e) {
+        if (GameManager.runningMode != GameManager.GameMode.MODE_START)
+            return;
+        if (!GameManager.targetPlayer.contains(e.getPlayer().getUniqueId()))
+            return;
         Block b = e.getBlock();
 
         List<String> lines = new ArrayList<>();
